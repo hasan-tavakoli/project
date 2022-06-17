@@ -41,12 +41,33 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - postgres-db-volume:/var/lib/postgresql/data
+      - ./postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
       retries: 5
     restart: always
+  metabase:
+      volumes:
+      # setup your SQLITE db (optional)
+        - /PATH/TO/SQLITE/:/metabase
+        - ./metabase-data:/metabase-data
+      environment:
+        - MB_DB_FILE=/metabase-data/metabase.db
+        - MB_DB_TYPE=postgres
+        - MB_DB_DBNAME=airflow
+        - MB_DB_PORT=5432
+        - MB_DB_USER=airflow
+        - MB_DB_PASS=airflow
+        - MB_DB_HOST=postgres
+      ports:
+        - 3000:3000
+      image: metabase/metabase
+      restart: always
+      depends_on: 
+        - postgres
+      networks:
+      - localnet
   redis:
     image: redis:latest
     expose:
@@ -143,7 +164,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-Mongo
-    command: --replSet rs0
+    command: --replSet rs0   
+    volumes:
+          - ./mongodb:/data/db
     networks:
       - localnet
     restart: always
@@ -164,11 +187,11 @@ services:
         "-c",
         "sleep 10 && mongo --host mongodb://mongo1:27017 config-replica.js && sleep 10 && mongo --host mongodb://mongo1:27017 config-data.js",
       ]
-    command: "mongoimport --host mongo1 --db test --collection user --type json --file /user.json --jsonArray"
+    command: mongoimport --host mongo1 --db test --collection user --type json --file /user.json --jsonArray
     restart: "no"
   airflow-scheduler:
     <<: *airflow-common
-    command: scheduler
+    command: scheduler & pip3 install -r /requirements.txt
     networks:
       - localnet
     healthcheck:
