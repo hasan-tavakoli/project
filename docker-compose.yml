@@ -191,7 +191,7 @@ services:
     restart: "no"
   airflow-scheduler:
     <<: *airflow-common
-    command: scheduler & pip3 install -r /requirements.txt
+    command: scheduler && pip3 install -r /requirements.txt
     networks:
       - localnet
     healthcheck:
@@ -207,7 +207,7 @@ services:
 
   airflow-worker:
     <<: *airflow-common
-    command: celery worker
+    command: celery worker && pip3 install -r /requirements.txt
     networks:
       - localnet
     healthcheck:
@@ -230,7 +230,7 @@ services:
 
   airflow-triggerer:
     <<: *airflow-common
-    command: triggerer
+    command: triggerer && pip3 install -r /requirements.txt
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 10s
@@ -344,7 +344,7 @@ services:
   # See: https://docs.docker.com/compose/profiles/
   flower:
     <<: *airflow-common
-    command: celery flower
+    command: celery flower && pip3 install -r /requirements.txt
     profiles:
       - flower
     ports:
