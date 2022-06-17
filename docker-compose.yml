@@ -50,8 +50,9 @@ services:
   metabase:
       volumes:
       # setup your SQLITE db (optional)
-        - /PATH/TO/SQLITE/:/metabase
-        - ./metabase-data:/metabase-data
+        - ./metabase:/metabase:ro
+        - ./metabase-data:/metabase-data :rwo
+        - ./dev/urandom:/dev/random:ro
       environment:
         - MB_DB_FILE=/metabase-data/metabase.db
         - MB_DB_TYPE=postgres
@@ -83,7 +84,7 @@ services:
 
   airflow-webserver:
     <<: *airflow-common
-    command: webserver
+    command: webserver &&  bash -c "pip3 install -r /requirements.txt"
     ports:
       - 8080:8080
     networks:
@@ -191,7 +192,7 @@ services:
     restart: "no"
   airflow-scheduler:
     <<: *airflow-common
-    command: scheduler && pip3 install -r /requirements.txt
+    command: scheduler &&  bash -c "pip3 install -r /requirements.txt"
     networks:
       - localnet
     healthcheck:
@@ -207,7 +208,7 @@ services:
 
   airflow-worker:
     <<: *airflow-common
-    command: celery worker && pip3 install -r /requirements.txt
+    command: celery worker &&  bash -c "pip3 install -r /requirements.txt"
     networks:
       - localnet
     healthcheck:
@@ -230,7 +231,7 @@ services:
 
   airflow-triggerer:
     <<: *airflow-common
-    command: triggerer && pip3 install -r /requirements.txt
+    command: triggerer && bash -c "pip3 install -r /requirements.txt"
     healthcheck:
       test: ["CMD-SHELL", 'airflow jobs check --job-type TriggererJob --hostname "$${HOSTNAME}"']
       interval: 10s
@@ -344,7 +345,7 @@ services:
   # See: https://docs.docker.com/compose/profiles/
   flower:
     <<: *airflow-common
-    command: celery flower && pip3 install -r /requirements.txt
+    command: celery flower && bash -c "pip3 install -r /requirements.txt"
     profiles:
       - flower
     ports:
