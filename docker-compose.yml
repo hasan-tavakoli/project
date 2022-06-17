@@ -165,7 +165,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile-Mongo
-    command: --replSet rs0 && bash -c "unzip data.zip && mongoimport --host mongo1 --db mydb --collection user --type json --file /user.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection step --type json --file /step.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection bloodpressure --type json --file /bloodpressure.json --jsonArray" 
+    command: bash -c "--replSet rs0 && bash -c "unzip data.zip && mongoimport --host mongo1 --db mydb --collection user --type json --file /user.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection step --type json --file /step.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection bloodpressure --type json --file /bloodpressure.json --jsonArray" 
     volumes:
           - ./mongodb:/data/db
     networks:
