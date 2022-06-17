@@ -188,7 +188,7 @@ services:
         "-c",
         "sleep 10 && mongo --host mongodb://mongo1:27017 config-replica.js && sleep 10 && mongo --host mongodb://mongo1:27017 config-data.js",
       ]
-    command: mongoimport --host mongo1 --db test --collection user --type json --file /user.json --jsonArray
+    command: bash -c "unzip data.zip && mongoimport --host mongo1 --db mydb --collection user --type json --file /user.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection step --type json --file /step.json --jsonArray &&  mongoimport --host mongo1 --db mydb --collection bloodpressure --type json --file /bloodpressure.json --jsonArray"
     restart: "no"
   airflow-scheduler:
     <<: *airflow-common
