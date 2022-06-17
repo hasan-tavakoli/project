@@ -50,8 +50,8 @@ services:
   metabase:
       volumes:
       # setup your SQLITE db (optional)
-        - ./metabase:/metabase:ro
         - ./metabase-data:/metabase-data :rwo
+        - ./ metabase:/metabase.db/metabase.db.mv.db :rwo
         - ./dev/urandom:/dev/random:ro
       environment:
         - MB_DB_FILE=/metabase-data/metabase.db
