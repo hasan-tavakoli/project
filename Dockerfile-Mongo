@@ -1,3 +1,4 @@
 FROM mongo:latest
 COPY config-replica.js config-data.js /
 COPY data/user.json user.json
+COPY data/bloodpressure.json bloodpressure.json
