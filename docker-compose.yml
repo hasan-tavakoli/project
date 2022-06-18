@@ -41,7 +41,7 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - ./postgres-db-volume:/var/lib/postgresql/data 
+      - ./postgres-db-volume:/var/lib/postgresql/data  
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
       interval: 5s
@@ -51,8 +51,8 @@ services:
       volumes:
       # setup your SQLITE db (optional)
         - ./metabase-data:/metabase-data 
-        - ./ metabase:/metabase.db/metabase.db.mv.db ./ 
-        - ./dev/urandom:/dev/random: 
+        - ./ metabase:/metabase.db/metabase.db.mv.db ./ :row 
+        - ./dev/urandom:/dev/random:row 
       environment:
         - MB_DB_FILE=/metabase-data/metabase.db
         - MB_DB_TYPE=postgres
